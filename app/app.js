@@ -15,7 +15,7 @@ const Application = function () {
 
 Application.prototype.initA4 = function () {
   this.$a4 = document.querySelector(".a4 span");
-  this.a4 = parseInt(localStorage.getItem("a4")) || 230.3;
+  this.a4 = parseFloat(localStorage.getItem("a4")) || 230.3;
   this.$a4.innerHTML = this.a4;
 };
 
@@ -39,9 +39,18 @@ Application.prototype.start = function () {
 
   this.$a4.addEventListener("click", function () {
     swal
-      .fire({ input: "number", inputValue: self.a4 })
+      .fire({
+        input: "number",
+        inputValue: self.a4,
+        inputValidator: (value) => {
+          if (!value || isNaN(value) || parseFloat(value) <= 0) {
+            return "Please enter a valid number";
+          }
+        },
+      })
       .then(function ({ value: a4 }) {
-        if (!parseInt(a4) || a4 === self.a4) {
+        a4 = parseFloat(a4);
+        if (!a4 || a4 === self.a4) {
           return;
         }
         self.a4 = a4;
