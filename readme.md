@@ -1,3 +1,7 @@
-The online tuner based on web audio api: [https://qiuxiang.github.io/tuner/app](https://qiuxiang.github.io/tuner/app/).
+# Thai Scale Tuner
 
-![](https://user-images.githubusercontent.com/1709072/30374834-e23d0bc2-98b8-11e7-91ae-8ac37bfd24b2.png)
+A Thai 7-TET scale tuner that uses Thai note names.
+
+## Acknowledgements
+
+This project is adapted from: [https://qiuxiang.github.io/tuner/app](https://qiuxiang.github.io/tuner/app/).
