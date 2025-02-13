@@ -8,14 +8,14 @@ const Application = function () {
     name: "A",
     frequency: this.a4,
     octave: 4,
-    value: 69,
+    value: 42,
     cents: 0,
   });
 };
 
 Application.prototype.initA4 = function () {
   this.$a4 = document.querySelector(".a4 span");
-  this.a4 = parseInt(localStorage.getItem("a4")) || 440;
+  this.a4 = parseInt(localStorage.getItem("a4")) || 230.3;
   this.$a4.innerHTML = this.a4;
 };
 
@@ -32,7 +32,7 @@ Application.prototype.start = function () {
     }
   };
 
-  swal.fire("Welcome to online tuner!").then(function () {
+  swal.fire("Press Ok to start.").then(function () {
     self.tuner.init();
     self.frequencyData = new Uint8Array(self.tuner.analyser.frequencyBinCount);
   });
@@ -52,7 +52,7 @@ Application.prototype.start = function () {
           name: "A",
           frequency: self.a4,
           octave: 4,
-          value: 69,
+          value: 42,
           cents: 0,
         });
         localStorage.setItem("a4", a4);

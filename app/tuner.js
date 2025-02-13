@@ -1,20 +1,15 @@
 const Tuner = function (a4) {
-  this.middleA = a4 || 440;
-  this.semitone = 69;
+  this.middleA = a4 || 230.3;
+  this.semitone = 42;
   this.bufferSize = 4096;
   this.noteStrings = [
-    "C",
-    "C♯",
-    "D",
-    "D♯",
-    "E",
-    "F",
-    "F♯",
-    "G",
-    "G♯",
-    "A",
-    "A♯",
-    "B",
+    "ด",
+    "ร",
+    "ม",
+    "ฟ",
+    "ซ",
+    "ล",
+    "ท",
   ];
 
   this.initGetUserMedia();
@@ -69,10 +64,10 @@ Tuner.prototype.startRecord = function () {
         if (frequency && self.onNoteDetected) {
           const note = self.getNote(frequency);
           self.onNoteDetected({
-            name: self.noteStrings[note % 12],
+            name: self.noteStrings[note % 7],
             value: note,
             cents: self.getCents(frequency, note),
-            octave: parseInt(note / 12) - 1,
+            octave: parseInt(note / 7) - 1,
             frequency: frequency,
           });
         }
@@ -112,7 +107,7 @@ Tuner.prototype.init = function () {
  * @returns {number}
  */
 Tuner.prototype.getNote = function (frequency) {
-  const note = 12 * (Math.log(frequency / this.middleA) / Math.log(2));
+  const note = 7 * (Math.log(frequency / this.middleA) / Math.log(2));
   return Math.round(note) + this.semitone;
 };
 
@@ -123,7 +118,7 @@ Tuner.prototype.getNote = function (frequency) {
  * @returns {number}
  */
 Tuner.prototype.getStandardFrequency = function (note) {
-  return this.middleA * Math.pow(2, (note - this.semitone) / 12);
+  return this.middleA * Math.pow(2, (note - this.semitone) / 7);
 };
 
 /**
@@ -135,7 +130,7 @@ Tuner.prototype.getStandardFrequency = function (note) {
  */
 Tuner.prototype.getCents = function (frequency, note) {
   return Math.floor(
-    (1200 * Math.log(frequency / this.getStandardFrequency(note))) / Math.log(2)
+    (1200 * Math.log(frequency / this.getStandardFrequency(note))) / Math.log(2) / (12/7)
   );
 };
 

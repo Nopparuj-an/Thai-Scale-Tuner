@@ -17,11 +17,11 @@ Notes.prototype.createNotes = function () {
   const minOctave = 1;
   const maxOctave = 8;
   for (var octave = minOctave; octave <= maxOctave; octave += 1) {
-    for (var n = 0; n < 12; n += 1) {
+    for (var n = 0; n < 7; n += 1) {
       const $note = document.createElement("div");
       $note.className = "note";
       $note.dataset.name = this.tuner.noteStrings[n];
-      $note.dataset.value = 12 * (octave + 1) + n;
+      $note.dataset.value = 7 * (octave + 1) + n;
       $note.dataset.octave = octave.toString();
       $note.dataset.frequency = this.tuner.getStandardFrequency(
         $note.dataset.value
