@@ -74,7 +74,13 @@ Tuner.prototype.startRecord = function () {
       });
     })
     .catch(function (error) {
-      alert(error.name + ": " + error.message);
+      swal.fire({
+        title: "Error, try again?",
+        text: error.name + ": " + error.message,
+        icon: "error",
+      }).then(function () {
+        self.startRecord(); // Retry microphone access
+      });
     });
 };
 
@@ -130,7 +136,7 @@ Tuner.prototype.getStandardFrequency = function (note) {
  */
 Tuner.prototype.getCents = function (frequency, note) {
   return Math.floor(
-    (1200 * Math.log(frequency / this.getStandardFrequency(note))) / Math.log(2) / (12/7)
+    (1200 * Math.log(frequency / this.getStandardFrequency(note))) / Math.log(2) / (12 / 7)
   );
 };
 

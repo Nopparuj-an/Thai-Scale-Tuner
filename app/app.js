@@ -32,11 +32,6 @@ Application.prototype.start = function () {
     }
   };
 
-  swal.fire("Press Ok to start.").then(function () {
-    self.tuner.init();
-    self.frequencyData = new Uint8Array(self.tuner.analyser.frequencyBinCount);
-  });
-
   this.$a4.addEventListener("click", function () {
     swal
       .fire({
@@ -75,18 +70,28 @@ Application.prototype.start = function () {
   });
 };
 
-// Application.prototype.updateFrequencyBars = function () {
-//   if (this.tuner.analyser) {
-//     this.tuner.analyser.getByteFrequencyData(this.frequencyData);
-//     this.frequencyBars.update(this.frequencyData);
-//   }
-//   requestAnimationFrame(this.updateFrequencyBars.bind(this));
-// };
+Application.prototype.updateFrequencyBars = function () {
+  if (this.tuner.analyser) {
+    this.tuner.analyser.getByteFrequencyData(this.frequencyData);
+    this.frequencyBars.update(this.frequencyData);
+  }
+  requestAnimationFrame(this.updateFrequencyBars.bind(this));
+};
 
 Application.prototype.update = function (note) {
   this.notes.update(note);
   this.meter.update((note.cents / 50) * 45);
 };
 
+Application.prototype.init = function () {
+  this.tuner.init();
+  this.frequencyData = new Uint8Array(this.tuner.analyser.frequencyBinCount);
+}
+
 const app = new Application();
 app.start();
+
+window.onload = function () {
+  // Start tuner automatically
+  app.init();
+};
