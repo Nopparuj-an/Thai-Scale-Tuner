@@ -98,6 +98,15 @@ Application.prototype.start = function () {
       self.frequencyBars.clear();
     }
   });
+
+  // Detect switchover to another tab
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      self.tuner.stopMicrophone();
+    } else {
+      self.init();
+    }
+  });
 };
 
 Application.prototype.updateFrequencyBars = function () {

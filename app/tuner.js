@@ -134,6 +134,17 @@ Tuner.prototype.startRecord = function (deviceId) {
     });
 };
 
+Tuner.prototype.stopMicrophone = function () {
+  if (this.stream) {
+    this.stream.getTracks().forEach(track => track.stop());
+    this.stream = null;
+  }
+  if (this.scriptProcessor) {
+    // Remove the same bound function
+    this.scriptProcessor.removeEventListener("audioprocess", this.boundProcessAudio);
+  }
+};
+
 Tuner.prototype.init = function () {
   // If audio context already exists, close it to release resources
   if (this.audioContext) {
