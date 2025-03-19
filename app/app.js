@@ -88,14 +88,24 @@ Application.prototype.start = function () {
     self.tuner.listMicrophones();
     self.tuner.init();
   });
+
+  // Handle animate checkbox toggle
+  document.getElementById("animate-checkbox").addEventListener("change", function (event) {
+    self.isAnimating = event.target.checked;
+    if (self.isAnimating) {
+      self.updateFrequencyBars();
+    } else {
+      self.frequencyBars.clear();
+    }
+  });
 };
 
 Application.prototype.updateFrequencyBars = function () {
-  if (this.tuner.analyser) {
+  if (this.isAnimating && this.tuner.analyser) {
     this.tuner.analyser.getByteFrequencyData(this.frequencyData);
     this.frequencyBars.update(this.frequencyData);
+    requestAnimationFrame(this.updateFrequencyBars.bind(this));
   }
-  requestAnimationFrame(this.updateFrequencyBars.bind(this));
 };
 
 Application.prototype.update = function (note) {
