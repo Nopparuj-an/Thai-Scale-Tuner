@@ -32,6 +32,13 @@ Application.prototype.start = function () {
     }
   };
 
+  // If user is using Chrome, show manual start button
+  if (navigator.userAgent.indexOf("Chrome") !== -1) {
+    swal.fire("Press Ok to start.").then(function () {
+      self.init();
+    });
+  }
+
   this.$a4.addEventListener("click", function () {
     swal
       .fire({
