@@ -87,6 +87,7 @@ Tuner.prototype.startRecord = function (deviceId) {
   // Stop any existing stream before starting a new one
   if (self.stream) {
     self.stream.getTracks().forEach((track) => track.stop());
+    self.stream = null; // Clear the reference to the old stream
   }
 
   const constraints = {
@@ -100,7 +101,12 @@ Tuner.prototype.startRecord = function (deviceId) {
       self.audioContext.createMediaStreamSource(stream).connect(self.analyser);
       self.analyser.connect(self.scriptProcessor);
       self.scriptProcessor.connect(self.audioContext.destination);
-      self.scriptProcessor.addEventListener("audioprocess", function (event) {
+
+      // Remove any existing audioprocess listener to avoid duplicates
+      self.scriptProcessor.removeEventListener("audioprocess", self.audioProcessHandler);
+
+      // Define and attach the new audioprocess handler
+      self.audioProcessHandler = function (event) {
         const frequency = self.pitchDetector.do(
           event.inputBuffer.getChannelData(0)
         );
@@ -114,7 +120,8 @@ Tuner.prototype.startRecord = function (deviceId) {
             frequency: frequency,
           });
         }
-      });
+      };
+      self.scriptProcessor.addEventListener("audioprocess", self.audioProcessHandler);
     })
     .catch(function (error) {
       swal.fire({
@@ -128,6 +135,13 @@ Tuner.prototype.startRecord = function (deviceId) {
 };
 
 Tuner.prototype.init = function () {
+  // If audio context already exists, close it to release resources
+  if (this.audioContext) {
+    this.audioContext.close();
+    this.audioContext = null;
+  }
+
+  // Reinitialize the audio context and nodes
   this.audioContext = new window.AudioContext();
   this.analyser = this.audioContext.createAnalyser();
   this.scriptProcessor = this.audioContext.createScriptProcessor(
