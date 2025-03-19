@@ -49,11 +49,54 @@ Tuner.prototype.initGetUserMedia = function () {
   }
 };
 
-Tuner.prototype.startRecord = function () {
-  const self = this;
+Tuner.prototype.listMicrophones = function () {
+  const selectElement = document.getElementById("microphone-select");
+
+  // Request microphone access first
   navigator.mediaDevices
-    .getUserMedia({ audio: true })
+    .getUserMedia({ audio: true }) // Request microphone access
+    .then((stream) => {
+      // Stop the stream immediately after access is granted
+      stream.getTracks().forEach((track) => track.stop());
+
+      // Now enumerate devices
+      return navigator.mediaDevices.enumerateDevices();
+    })
+    .then((devices) => {
+      const audioInputDevices = devices.filter((device) => device.kind === "audioinput");
+
+      // Clear existing options
+      selectElement.innerHTML = '<option value="">Select microphone</option>';
+
+      // Populate the dropdown with available microphones
+      audioInputDevices.forEach((device) => {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.textContent = device.label || `Microphone ${selectElement.length}`;
+        selectElement.appendChild(option);
+      });
+
+      // Optionally select the first microphone by default
+      selectElement.selectedIndex = 1;
+    });
+};
+
+Tuner.prototype.startRecord = function (deviceId) {
+  const self = this;
+
+  // Stop any existing stream before starting a new one
+  if (self.stream) {
+    self.stream.getTracks().forEach((track) => track.stop());
+  }
+
+  const constraints = {
+    audio: deviceId ? { deviceId: { exact: deviceId } } : true,
+  };
+
+  navigator.mediaDevices
+    .getUserMedia(constraints)
     .then(function (stream) {
+      self.stream = stream; // Save the new stream
       self.audioContext.createMediaStreamSource(stream).connect(self.analyser);
       self.analyser.connect(self.scriptProcessor);
       self.scriptProcessor.connect(self.audioContext.destination);
@@ -79,7 +122,7 @@ Tuner.prototype.startRecord = function () {
         text: error.name + ": " + error.message,
         icon: "error",
       }).then(function () {
-        self.startRecord(); // Retry microphone access
+        app.init();
       });
     });
 };
@@ -102,7 +145,16 @@ Tuner.prototype.init = function () {
       1,
       self.audioContext.sampleRate
     );
-    self.startRecord();
+
+    // Check if a microphone is selected. If not, start recording with the default microphone.
+    const selectElement = document.getElementById("microphone-select");
+    const selectedDeviceId = selectElement.value;
+
+    if (selectedDeviceId) {
+      self.startRecord(selectedDeviceId);
+    } else {
+      self.startRecord();
+    }
   });
 };
 

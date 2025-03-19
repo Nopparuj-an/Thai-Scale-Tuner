@@ -163,3 +163,9 @@ body {
   top: 16px;
   right: 16px;
 }
+
+.mics {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+}

@@ -3,7 +3,7 @@ const Application = function () {
   this.tuner = new Tuner(this.a4);
   this.notes = new Notes(".notes", this.tuner);
   this.meter = new Meter(".meter");
-  // this.frequencyBars = new FrequencyBars(".frequency-bars");
+  this.frequencyBars = new FrequencyBars(".frequency-bars");
   this.update({
     name: "A",
     frequency: this.a4,
@@ -70,10 +70,23 @@ Application.prototype.start = function () {
       });
   });
 
-  // this.updateFrequencyBars();
+  this.updateFrequencyBars();
 
+  // Handle auto mode button
   document.querySelector(".auto input").addEventListener("change", () => {
     this.notes.toggleAutoMode();
+  });
+
+  // Handle microphone drop-down selection
+  document.getElementById("microphone-select").addEventListener("change", function (event) {
+    const selectedDeviceId = event.target.value;
+    self.tuner.startRecord(selectedDeviceId);
+  });
+
+  // Handle microphone refresh
+  document.getElementById("microphone-refresh").addEventListener("click", function () {
+    self.tuner.listMicrophones();
+    self.tuner.init();
   });
 };
 
@@ -91,9 +104,15 @@ Application.prototype.update = function (note) {
 };
 
 Application.prototype.init = function () {
+  const self = this;
+
+  // List available microphones
+  this.tuner.listMicrophones();
+
+  // Initialize tuner
   this.tuner.init();
   this.frequencyData = new Uint8Array(this.tuner.analyser.frequencyBinCount);
-}
+};
 
 const app = new Application();
 app.start();

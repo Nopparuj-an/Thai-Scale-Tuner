@@ -1,37 +1,52 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,user-scalable=no"
-    />
-    <title>Thai Scale Tuner</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <canvas class="frequency-bars"></canvas>
-    <div class="meter">
-      <div class="meter-dot"></div>
-      <div class="meter-pointer"></div>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>Thai Scale Tuner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <canvas class="frequency-bars"></canvas>
+
+  <div class="meter">
+    <div class="meter-dot"></div>
+    <div class="meter-pointer"></div>
+  </div>
+
+  <div class="notes">
+    <div class="notes-list"></div>
+    <div class="frequency">
+      <span>Hz</span>
     </div>
-    <div class="notes">
-      <div class="notes-list"></div>
-      <div class="frequency">
-        <span>Hz</span>
-      </div>
-    </div>
-    <div class="a4">ด<sub>5</sub> = <span>230.3</span> Hz</div>
-    <label class="auto">
-      Auto
-      <input type="checkbox" checked />
-    </label>
-    <script src="sweetalert2@9.js"></script>
-    <script src="aubiojs@0.1.1.min.js"></script>
-    <script src="tuner.js"></script>
-    <script src="meter.js"></script>
-    <!-- <script src="frequency-bars.js"></script> -->
-    <script src="notes.js"></script>
-    <script src="app.js"></script>
-  </body>
+  </div>
+
+  <div class="a4">
+    ด<sub>5</sub> = <span>230.3</span> Hz
+  </div>
+
+  <label class="auto">
+    Auto
+    <input type="checkbox" checked />
+  </label>
+
+  <div class="mics">
+    <label for="microphone-select">MIC</label>
+    <select id="microphone-select">
+      <option value="">Default</option>
+    </select>
+    <button id="microphone-refresh">Refresh</button>
+  </div>
+</body>
+
+<script src="sweetalert2@9.js"></script>
+<script src="aubiojs@0.1.1.min.js"></script>
+<script src="tuner.js"></script>
+<script src="meter.js"></script>
+<script src="frequency-bars.js"></script>
+<script src="notes.js"></script>
+<script src="app.js"></script>
+
 </html>
