@@ -73,7 +73,7 @@ Application.prototype.start = function () {
   this.updateFrequencyBars();
 
   // Handle auto mode button
-  document.querySelector(".auto input").addEventListener("change", () => {
+  document.getElementById("auto-checkbox").addEventListener("change", () => {
     this.notes.toggleAutoMode();
   });
 

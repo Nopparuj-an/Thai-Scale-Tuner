@@ -52,6 +52,9 @@ Tuner.prototype.initGetUserMedia = function () {
 Tuner.prototype.listMicrophones = function () {
   const selectElement = document.getElementById("microphone-select");
 
+  // Remember the selected microphone, if exist
+  const selectedDeviceId = selectElement ? selectElement.value : null;
+
   // Request microphone access first
   navigator.mediaDevices
     .getUserMedia({ audio: true }) // Request microphone access
@@ -76,8 +79,8 @@ Tuner.prototype.listMicrophones = function () {
         selectElement.appendChild(option);
       });
 
-      // Optionally select the first microphone by default
-      selectElement.selectedIndex = 1;
+      // Restore the selected microphone if exist, otherwise select the first one
+      selectElement.value = selectedDeviceId || selectElement.children[1].value;
     });
 };
 
