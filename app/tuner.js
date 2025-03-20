@@ -100,16 +100,27 @@ Tuner.prototype.startRecord = function (deviceId) {
   navigator.mediaDevices
     .getUserMedia(constraints)
     .then(function (stream) {
-      self.stream = stream; // Save the new stream
+      self.stream = stream;
       self.source = self.audioContext.createMediaStreamSource(stream);
+
+      // Create a MediaStream destination for audio routing
+      const destination = self.audioContext.createMediaStreamDestination();
       self.source.connect(self.analyser);
       self.analyser.connect(self.scriptProcessor);
-      self.scriptProcessor.connect(self.audioContext.destination);
+      self.scriptProcessor.connect(destination);
 
-      // Remove any existing audioprocess listener to avoid duplicates
-      self.scriptProcessor.removeEventListener("audioprocess", self.audioProcessHandler);
+      // Create the monitor audio element
+      self.monitorAudio = document.createElement("audio");
+      self.monitorAudio.srcObject = destination.stream;
+      self.monitorAudio.loop = true;
+      self.monitorAudio.volume = 1.0;
+      self.monitorAudio.muted = false;
+      self.monitorAudio.autoplay = true;
+      document.body.appendChild(self.monitorAudio);
 
-      // Define and attach the new audioprocess handler
+      self.monitorAudio.play().catch((err) => console.error("Monitor audio playback error:", err));
+
+      // Add the audioprocess handler
       self.audioProcessHandler = function (event) {
         const frequency = self.pitchDetector.do(
           event.inputBuffer.getChannelData(0)
@@ -149,7 +160,18 @@ Tuner.prototype.stopMicrophone = function () {
   }
 };
 
+Tuner.prototype.stopMonitor = function () {
+  // Turn off the monitor if it was on
+  if (this.monitorConnected) {
+    this.source.disconnect(this.audioContext.destination);
+    this.monitorConnected = false;
+    document.getElementById("monitor-checkbox").checked = false;
+  }
+};
+
 Tuner.prototype.init = function () {
+  this.stopMonitor();
+
   // If audio context already exists, close it to release resources
   if (this.audioContext) {
     this.audioContext.close();

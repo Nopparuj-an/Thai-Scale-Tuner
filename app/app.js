@@ -80,6 +80,7 @@ Application.prototype.start = function () {
 
   // Handle microphone drop-down selection
   document.getElementById("microphone-select").addEventListener("change", function (event) {
+    self.tuner.stopMonitor();
     const selectedDeviceId = event.target.value;
     self.tuner.startRecord(selectedDeviceId);
   });
