@@ -42,6 +42,7 @@ Application.prototype.start = function () {
   this.$a4.addEventListener("click", function () {
     swal
       .fire({
+        title: "Set Frequency",
         input: "number",
         inputValue: self.a4,
         inputValidator: (value) => {
@@ -99,8 +100,43 @@ Application.prototype.start = function () {
     }
   });
 
+  // Handle monitor checkbox toggle
+  document.getElementById("monitor-checkbox").addEventListener("change", function (event) {
+    self.tuner.isMonitoring = event.target.checked;
+    
+    if (self.tuner.source) {
+      try {
+        if (self.tuner.isMonitoring) {
+          // Connect only if not already connected
+          if (!self.tuner.monitorConnected) {
+            self.tuner.source.connect(self.tuner.audioContext.destination);
+            self.tuner.monitorConnected = true;
+          }
+        } else {
+          // Only disconnect if connected it before
+          if (self.tuner.monitorConnected) {
+            self.tuner.source.disconnect(self.tuner.audioContext.destination);
+            self.tuner.monitorConnected = false;
+          }
+        }
+      } catch (error) {
+        console.error("Error toggling monitor connection:", error);
+      }
+    }
+  });
+
   // Detect switchover to another tab
   document.addEventListener("visibilitychange", function () {
+    // Do nothing if the tuner is not initialized
+    if (!self.tuner.audioContext) {
+      return;
+    }
+
+    // Do nothing if monitor mode is on
+    if (document.getElementById("monitor-checkbox").checked) {
+      return;
+    }
+
     if (document.hidden) {
       self.tuner.stopMicrophone();
     } else {

@@ -169,3 +169,9 @@ body {
   bottom: 16px;
   left: 16px;
 }
+
+.monitor {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}

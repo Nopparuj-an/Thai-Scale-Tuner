@@ -90,7 +90,7 @@ Tuner.prototype.startRecord = function (deviceId) {
   // Stop any existing stream before starting a new one
   if (self.stream) {
     self.stream.getTracks().forEach((track) => track.stop());
-    self.stream = null; // Clear the reference to the old stream
+    self.stream = null;
   }
 
   const constraints = {
@@ -101,7 +101,8 @@ Tuner.prototype.startRecord = function (deviceId) {
     .getUserMedia(constraints)
     .then(function (stream) {
       self.stream = stream; // Save the new stream
-      self.audioContext.createMediaStreamSource(stream).connect(self.analyser);
+      self.source = self.audioContext.createMediaStreamSource(stream);
+      self.source.connect(self.analyser);
       self.analyser.connect(self.scriptProcessor);
       self.scriptProcessor.connect(self.audioContext.destination);
 
